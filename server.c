@@ -9,7 +9,6 @@
 #include <unistd.h>
 
 #define PORT 8080
-#define IP "127.0.0.1"
 #define BUFFER_SIZE 1024
 #define PROTOCOL_FAMILY AF_INET
 #define SOCKET_TYPE SOCK_DGRAM
