@@ -95,9 +95,7 @@ the erase operation if it is "unnecessary". It takes 2 arguments:
 
 1. The pointer to the starting point of the memory area to remove.
 2. The number of bytes to remove.
-
-1. The pointer of starting memory area to erase.
-2. 
+3. The pointer of starting memory area to erase.
 
 ### Socket() function:
 
