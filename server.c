@@ -20,7 +20,7 @@ bool oparate_message(char *buffer, size_t lenght_of_message) {
   // Deep copy of the message in case of use of multithreading.
   char* message = malloc(lenght_of_message);
   memcpy(message, buffer, lenght_of_message);
-  printf("Message from client: %s\n", message);
+  printf("[+]Message from client: %s\n", message);
   bool keep_running = strcmp(message, EXIT_MESSAGE) != 0;
   free(message);
   return keep_running;
@@ -31,7 +31,7 @@ int main (int argc, char *argv[]){
   
   if (sock_fd < 0) {
     int error = errno;
-    printf("Socket function error: %s\n", strerror(error));
+    printf("[-]Socket function error: %s\n", strerror(error));
     return 1;
   }
 
@@ -42,11 +42,11 @@ int main (int argc, char *argv[]){
 
   server_address.sin_family = PROTOCOL_FAMILY;
   server_address.sin_port = htons(PORT);
-  server_address.sin_addr.s_addr = inet_addr(IP);
+  server_address.sin_addr.s_addr = INADDR_ANY;
 
   if (bind(sock_fd, (struct sockaddr*)& server_address, server_address_length) < 0) {
     int error = errno;
-    printf("Bind function error: %s\n", strerror(error));
+    printf("[-]Bind function error: %s\n", strerror(error));
     return 1;
   }
 
@@ -55,7 +55,7 @@ int main (int argc, char *argv[]){
   socklen_t client_address_length = sizeof(client_address);
 
   bool keep_running = true;
-  printf("Server is running...\n");
+  printf("[+]Server is running...\n");
   while (keep_running) {
     explicit_bzero(buffer, BUFFER_SIZE);
 
@@ -63,16 +63,16 @@ int main (int argc, char *argv[]){
     
     if (lenght_of_message < 0) {
       int error = errno;
-      printf("Recvfrom function error: %s\n", strerror(error));
-      printf("Error produced while processing request of %s.\n", inet_ntoa(client_address.sin_addr));
+      printf("[-]Recvfrom function error: %s\n", strerror(error));
+      printf("[-]Error produced while processing request of %s.\n", inet_ntoa(client_address.sin_addr));
       return 1;
     }
 
     keep_running = oparate_message(buffer, lenght_of_message);
 
     if(!keep_running) {
-      printf("Server is shutting down...\n");
-      continue;
+      printf("[+]Server is shutting down...\n");
+      break;
     }
 
     explicit_bzero(buffer, BUFFER_SIZE);
@@ -80,8 +80,8 @@ int main (int argc, char *argv[]){
 
     if(sendto(sock_fd, buffer, BUFFER_SIZE, 0, (struct sockaddr*)& client_address, client_address_length) < 0){
       int error = errno;
-      printf("Sendto function error: %s\n", strerror(error));
-      printf("Error produced while processing response of %s.\n", inet_ntoa(client_address.sin_addr));
+      printf("[-]Sendto function error: %s\n", strerror(error));
+      printf("[-]Error produced while processing response of %s.\n", inet_ntoa(client_address.sin_addr));
       return 1;
     }
 
@@ -90,7 +90,7 @@ int main (int argc, char *argv[]){
   free(buffer);
   if(close(sock_fd) < 0) {
     int error = errno;
-    printf("Close function error: %s\n", strerror(error));
+    printf("[-]Close function error: %s\n", strerror(error));
     return 1;
   }
 
